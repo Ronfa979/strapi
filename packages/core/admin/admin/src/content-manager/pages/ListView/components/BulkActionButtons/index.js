@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+import { useQuery } from 'react-query';
 
 import InjectionZoneList from '../../../../components/InjectionZoneList';
 import { getTrad } from '../../../../utils';
@@ -79,10 +80,9 @@ const ConfirmDialogPublishAll = ({
   slug,
 }) => {
   const { formatMessage } = useIntl();
-  const [numberOfDraftRelations, setNumberOfDraftRelations] = React.useState(null);
   const { get } = useFetchClient();
 
-  const onDraftRelationCheck = React.useCallback(async () => {
+  const fetchDraftRelations = async () => {
     try {
       const endPoint = `/content-manager/collection-types/${slug}/actions/countManyEntriesDraftRelations?${stringify(
         { ids: selectedEntries },
@@ -91,21 +91,16 @@ const ConfirmDialogPublishAll = ({
 
       const draftRelations = await get(endPoint);
       const draftEntries = await draftRelations.data.data;
-      setNumberOfDraftRelations(draftEntries);
 
       return draftEntries;
     } catch (err) {
       console.error(err.message);
 
-      return Promise.reject(err);
+      return null;
     }
-  }, [get, selectedEntries, slug]);
+  };
 
-  React.useEffect(() => {
-    if (isOpen) {
-      onDraftRelationCheck();
-    }
-  }, [onDraftRelationCheck, isOpen]);
+  const { data } = useQuery(['draft-relations'], fetchDraftRelations);
 
   return (
     <ConfirmBulkActionDialog
@@ -113,7 +108,7 @@ const ConfirmDialogPublishAll = ({
       onToggleDialog={onToggleDialog}
       dialogBody={
         <>
-          {numberOfDraftRelations && (
+          {data && (
             <Typography id="confirm-description">
               {formatMessage(
                 {
@@ -124,7 +119,7 @@ const ConfirmDialogPublishAll = ({
                 {
                   // eslint-disable-next-line react/no-unstable-nested-components
                   b: (chunks) => <Typography fontWeight="bold">{chunks}</Typography>,
-                  count: numberOfDraftRelations,
+                  count: data,
                   entities: selectedEntries.length,
                 }
               )}
