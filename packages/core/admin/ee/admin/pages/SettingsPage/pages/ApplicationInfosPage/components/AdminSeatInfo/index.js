@@ -11,7 +11,7 @@ import { useLicenseLimits } from '../../../../../../hooks';
 const BILLING_STRAPI_CLOUD_URL = 'https://cloud.strapi.io/profile/billing';
 const BILLING_SELF_HOSTED_URL = 'https://strapi.io/billing/request-seats';
 
-const AdminSeatInfo = () => {
+export const AdminSeatInfoEE = () => {
   const { formatMessage } = useIntl();
   const { license } = useLicenseLimits();
   const { licenseLimitStatus, enforcementUserCount, permittedSeats, isHostedOnStrapiCloud } =
@@ -86,5 +86,3 @@ const AdminSeatInfo = () => {
     </GridItem>
   );
 };
-
-export default AdminSeatInfo;
