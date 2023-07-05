@@ -5,6 +5,7 @@ import { Table, useTableContext } from '@strapi/helper-plugin';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from 'react-intl';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { combineReducers, createStore } from 'redux';
@@ -30,6 +31,14 @@ jest.mock('../../../../../../shared/hooks', () => ({
 
 jest.mock('../SelectedEntriesModal', () => () => <div>SelectedEntriesModal</div>);
 
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
 const user = userEvent.setup();
 
 const rootReducer = combineReducers(reducers);
@@ -49,17 +58,19 @@ const store = createStore(rootReducer, {
 
 const setup = (props) =>
   render(
-    <ThemeProvider theme={lightTheme}>
-      <IntlProvider locale="en" messages={{}} defaultLocale="en">
-        <Provider store={store}>
-          <MemoryRouter>
-            <Table.Root>
-              <BulkActionButtons {...props} />
-            </Table.Root>
-          </MemoryRouter>
-        </Provider>
-      </IntlProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={client}>
+      <ThemeProvider theme={lightTheme}>
+        <IntlProvider locale="en" messages={{}} defaultLocale="en">
+          <Provider store={store}>
+            <MemoryRouter>
+              <Table.Root>
+                <BulkActionButtons {...props} />
+              </Table.Root>
+            </MemoryRouter>
+          </Provider>
+        </IntlProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 
 describe('BulkActionsBar', () => {

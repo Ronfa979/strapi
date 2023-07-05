@@ -156,10 +156,7 @@ const ConfirmDialogPublishAll = ({
   );
 };
 
-ConfirmDialogPublishAll.propTypes = {
-  ...confirmDialogsPropTypes,
-  slug: PropTypes.string.isRequired,
-};
+ConfirmDialogPublishAll.propTypes = confirmDialogsPropTypes;
 
 /* -------------------------------------------------------------------------------------------------
  * ConfirmDialogUnpublishAll
