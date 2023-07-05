@@ -82,27 +82,30 @@ const ConfirmDialogPublishAll = ({
   const { get } = useFetchClient();
   const { selectedEntries } = useTableContext();
 
-  const fetchDraftRelations = async () => {
-    try {
-      const endPoint = `/content-manager/collection-types/${slug}/actions/countManyEntriesDraftRelations?${stringify(
-        { ids: selectedEntries },
-        { encode: false }
-      )}`;
+  const { data: countDraftRelations } = useQuery(
+    ['content-manager', 'draft-relations'],
+    async () => {
+      try {
+        const {
+          data: { data },
+        } = await get(
+          `/content-manager/collection-types/${slug}/actions/countManyEntriesDraftRelations?${stringify(
+            { ids: selectedEntries },
+            { encode: false }
+          )}`
+        );
 
-      const draftRelations = await get(endPoint);
-      const draftEntries = await draftRelations.data.data;
+        return data;
+      } catch (err) {
+        console.error(err.message);
 
-      return draftEntries;
-    } catch (err) {
-      console.error(err.message);
-
-      return null;
+        return null;
+      }
+    },
+    {
+      enabled: isOpen,
     }
-  };
-
-  const { data } = useQuery(['draft-relations'], fetchDraftRelations, {
-    enabled: isOpen,
-  });
+  );
 
   return (
     <ConfirmBulkActionDialog
@@ -110,7 +113,7 @@ const ConfirmDialogPublishAll = ({
       onToggleDialog={onToggleDialog}
       dialogBody={
         <>
-          {data && (
+          {countDraftRelations && (
             <Typography id="confirm-description">
               {formatMessage(
                 {
@@ -121,7 +124,7 @@ const ConfirmDialogPublishAll = ({
                 {
                   // eslint-disable-next-line react/no-unstable-nested-components
                   b: (chunks) => <Typography fontWeight="bold">{chunks}</Typography>,
-                  count: data,
+                  count: countDraftRelations,
                   entities: selectedEntries.length,
                 }
               )}
