@@ -575,7 +575,6 @@ function ListView({
                   onConfirmDeleteAll={handleConfirmDeleteAllData}
                   onConfirmPublishAll={handleConfirmPublishAllData}
                   onConfirmUnpublishAll={handleConfirmUnpublishAllData}
-                  slug={slug}
                 />
               </Table.ActionBar>
               <Table.Content>

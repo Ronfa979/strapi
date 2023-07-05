@@ -6,8 +6,8 @@ import { Check, ExclamationMarkCircle, Trash } from '@strapi/icons';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
 import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
 
 import InjectionZoneList from '../../../../components/InjectionZoneList';
 import { getTrad } from '../../../../utils';
@@ -76,11 +76,11 @@ const ConfirmDialogPublishAll = ({
   onToggleDialog,
   isConfirmButtonLoading,
   onConfirm,
-  selectedEntries,
   slug,
 }) => {
   const { formatMessage } = useIntl();
   const { get } = useFetchClient();
+  const { selectedEntries } = useTableContext();
 
   const fetchDraftRelations = async () => {
     try {
@@ -155,7 +155,6 @@ const ConfirmDialogPublishAll = ({
 
 ConfirmDialogPublishAll.propTypes = {
   ...confirmDialogsPropTypes,
-  selectedEntries: PropTypes.array.isRequired,
   slug: PropTypes.string.isRequired,
 };
 
@@ -257,11 +256,13 @@ const BulkActionButtons = ({
   onConfirmDeleteAll,
   onConfirmPublishAll,
   onConfirmUnpublishAll,
-  slug,
 }) => {
   const { formatMessage } = useIntl();
   const { trackUsage } = useTracking();
-  const { data } = useSelector(listViewDomain());
+  const {
+    data,
+    contentType: { uid: slug },
+  } = useSelector(listViewDomain());
   const { selectedEntries, setSelectedEntries } = useTableContext();
 
   const [isConfirmButtonLoading, setIsConfirmButtonLoading] = React.useState(false);
@@ -338,7 +339,6 @@ const BulkActionButtons = ({
             onToggleDialog={togglePublishDialog}
             isConfirmButtonLoading={isConfirmButtonLoading}
             onConfirm={handleBulkPublish}
-            selectedEntries={selectedEntries}
             slug={slug}
           />
         </>
@@ -387,7 +387,6 @@ BulkActionButtons.propTypes = {
   onConfirmDeleteAll: PropTypes.func,
   onConfirmPublishAll: PropTypes.func,
   onConfirmUnpublishAll: PropTypes.func,
-  slug: PropTypes.string.isRequired,
 };
 
 export default BulkActionButtons;
