@@ -8,7 +8,7 @@ import { useIntl } from 'react-intl';
 
 import { useLicenseLimits } from '../../../../../../hooks';
 
-const CreateAction = ({ onClick }) => {
+export const CreateActionEE = ({ onClick }) => {
   const { formatMessage } = useIntl();
   const { license } = useLicenseLimits();
   const { permittedSeats, shouldStopCreate } = license?.data ?? {};
@@ -47,8 +47,6 @@ const CreateAction = ({ onClick }) => {
   );
 };
 
-CreateAction.propTypes = {
+CreateActionEE.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
-
-export default CreateAction;
