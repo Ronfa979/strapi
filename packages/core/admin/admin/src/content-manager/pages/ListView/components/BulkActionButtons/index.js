@@ -85,6 +85,9 @@ const ConfirmDialogPublishAll = ({
   const { data: countDraftRelations } = useQuery(
     ['content-manager', 'draft-relations'],
     async () => {
+      /**
+       * TODO: refactor the API call when the param serializer will be ready
+       */
       try {
         const {
           data: { data },
