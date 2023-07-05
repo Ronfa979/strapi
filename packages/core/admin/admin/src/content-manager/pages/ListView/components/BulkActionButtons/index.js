@@ -105,7 +105,6 @@ const ConfirmDialogPublishAll = ({
     if (isOpen) {
       onDraftRelationCheck();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDraftRelationCheck, isOpen]);
 
   return (
