@@ -100,7 +100,9 @@ const ConfirmDialogPublishAll = ({
     }
   };
 
-  const { data } = useQuery(['draft-relations'], fetchDraftRelations);
+  const { data } = useQuery(['draft-relations'], fetchDraftRelations, {
+    enabled: isOpen,
+  });
 
   return (
     <ConfirmBulkActionDialog
