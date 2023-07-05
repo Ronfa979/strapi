@@ -1,9 +1,10 @@
 import * as React from 'react';
 
 import { Button, Flex, Dialog, DialogBody, DialogFooter, Typography } from '@strapi/design-system';
-import { useTracking, useTableContext } from '@strapi/helper-plugin';
+import { useTracking, useTableContext, useFetchClient } from '@strapi/helper-plugin';
 import { Check, ExclamationMarkCircle, Trash } from '@strapi/icons';
 import PropTypes from 'prop-types';
+import { stringify } from 'qs';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
@@ -69,8 +70,43 @@ const confirmDialogsPropTypes = {
  * ConfirmDialogPublishAll
  * -----------------------------------------------------------------------------------------------*/
 
-const ConfirmDialogPublishAll = ({ isOpen, onToggleDialog, isConfirmButtonLoading, onConfirm }) => {
+const ConfirmDialogPublishAll = ({
+  isOpen,
+  onToggleDialog,
+  isConfirmButtonLoading,
+  onConfirm,
+  selectedEntries,
+  slug,
+}) => {
   const { formatMessage } = useIntl();
+  const [numberOfDraftRelations, setNumberOfDraftRelations] = React.useState(null);
+  const { get } = useFetchClient();
+
+  const onDraftRelationCheck = React.useCallback(async () => {
+    try {
+      const endPoint = `/content-manager/collection-types/${slug}/actions/countManyEntriesDraftRelations?${stringify(
+        { ids: selectedEntries },
+        { encode: false }
+      )}`;
+
+      const draftRelations = await get(endPoint);
+      const draftEntries = await draftRelations.data.data;
+      setNumberOfDraftRelations(draftEntries);
+
+      return draftEntries;
+    } catch (err) {
+      console.error(err.message);
+
+      return Promise.reject(err);
+    }
+  }, [get, selectedEntries, slug]);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      onDraftRelationCheck();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onDraftRelationCheck, isOpen]);
 
   return (
     <ConfirmBulkActionDialog
@@ -78,6 +114,23 @@ const ConfirmDialogPublishAll = ({ isOpen, onToggleDialog, isConfirmButtonLoadin
       onToggleDialog={onToggleDialog}
       dialogBody={
         <>
+          {numberOfDraftRelations && (
+            <Typography id="confirm-description">
+              {formatMessage(
+                {
+                  id: getTrad(`popUpwarning.warning.bulk-has-draft-relations.message`),
+                  defaultMessage:
+                    '<b>{count} {count, plural, one { relation } other { relations } } out of {entities} { entities, plural, one { entry } other { entries } } {count, plural, one { is } other { are } }</b> not published yet and might lead to unexpected behavior.',
+                },
+                {
+                  // eslint-disable-next-line react/no-unstable-nested-components
+                  b: (chunks) => <Typography fontWeight="bold">{chunks}</Typography>,
+                  count: numberOfDraftRelations,
+                  entities: selectedEntries.length,
+                }
+              )}
+            </Typography>
+          )}
           <Typography id="confirm-description" textAlign="center">
             {formatMessage({
               id: getTrad('popUpWarning.bodyMessage.contentType.publish.all'),
@@ -104,7 +157,11 @@ const ConfirmDialogPublishAll = ({ isOpen, onToggleDialog, isConfirmButtonLoadin
   );
 };
 
-ConfirmDialogPublishAll.propTypes = confirmDialogsPropTypes;
+ConfirmDialogPublishAll.propTypes = {
+  ...confirmDialogsPropTypes,
+  selectedEntries: PropTypes.array.isRequired,
+  slug: PropTypes.string.isRequired,
+};
 
 /* -------------------------------------------------------------------------------------------------
  * ConfirmDialogUnpublishAll
@@ -204,6 +261,7 @@ const BulkActionButtons = ({
   onConfirmDeleteAll,
   onConfirmPublishAll,
   onConfirmUnpublishAll,
+  slug,
 }) => {
   const { formatMessage } = useIntl();
   const { trackUsage } = useTracking();
@@ -284,6 +342,8 @@ const BulkActionButtons = ({
             onToggleDialog={togglePublishDialog}
             isConfirmButtonLoading={isConfirmButtonLoading}
             onConfirm={handleBulkPublish}
+            selectedEntries={selectedEntries}
+            slug={slug}
           />
         </>
       )}
@@ -331,6 +391,7 @@ BulkActionButtons.propTypes = {
   onConfirmDeleteAll: PropTypes.func,
   onConfirmPublishAll: PropTypes.func,
   onConfirmUnpublishAll: PropTypes.func,
+  slug: PropTypes.string.isRequired,
 };
 
 export default BulkActionButtons;
