@@ -116,13 +116,13 @@ const ConfirmDialogPublishAll = ({
       onToggleDialog={onToggleDialog}
       dialogBody={
         <>
-          {countDraftRelations && (
-            <Typography id="confirm-description">
-              {formatMessage(
+          <Typography id="confirm-description" textAlign="center">
+            {countDraftRelations &&
+              formatMessage(
                 {
                   id: getTrad(`popUpwarning.warning.bulk-has-draft-relations.message`),
                   defaultMessage:
-                    '<b>{count} {count, plural, one { relation } other { relations } } out of {entities} { entities, plural, one { entry } other { entries } } {count, plural, one { is } other { are } }</b> not published yet and might lead to unexpected behavior.',
+                    '<b>{count} {count, plural, one { relation } other { relations } } out of {entities} { entities, plural, one { entry } other { entries } } {count, plural, one { is } other { are } }</b> not published yet and might lead to unexpected behavior. ',
                 },
                 {
                   // eslint-disable-next-line react/no-unstable-nested-components
@@ -131,9 +131,6 @@ const ConfirmDialogPublishAll = ({
                   entities: selectedEntries.length,
                 }
               )}
-            </Typography>
-          )}
-          <Typography id="confirm-description" textAlign="center">
             {formatMessage({
               id: getTrad('popUpWarning.bodyMessage.contentType.publish.all'),
               defaultMessage: 'Are you sure you want to publish these entries?',
