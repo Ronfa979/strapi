@@ -57,7 +57,6 @@
     "@strapi/typescript-utils": "4.11.3",
     "@strapi/utils": "4.11.3",
     "axios": "1.4.0",
-    "babel-loader": "^9.1.2",
     "babel-plugin-styled-components": "2.1.1",
     "bcryptjs": "2.4.3",
     "browserslist": "^4.17.3",
