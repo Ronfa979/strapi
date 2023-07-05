@@ -71,16 +71,13 @@ const confirmDialogsPropTypes = {
  * ConfirmDialogPublishAll
  * -----------------------------------------------------------------------------------------------*/
 
-const ConfirmDialogPublishAll = ({
-  isOpen,
-  onToggleDialog,
-  isConfirmButtonLoading,
-  onConfirm,
-  slug,
-}) => {
+const ConfirmDialogPublishAll = ({ isOpen, onToggleDialog, isConfirmButtonLoading, onConfirm }) => {
   const { formatMessage } = useIntl();
   const { get } = useFetchClient();
   const { selectedEntries } = useTableContext();
+  const {
+    contentType: { uid: slug },
+  } = useSelector(listViewDomain());
 
   const { data: countDraftRelations } = useQuery(
     ['content-manager', 'draft-relations'],
@@ -117,7 +114,7 @@ const ConfirmDialogPublishAll = ({
       dialogBody={
         <>
           <Typography id="confirm-description" textAlign="center">
-            {countDraftRelations &&
+            {countDraftRelations > 0 &&
               formatMessage(
                 {
                   id: getTrad(`popUpwarning.warning.bulk-has-draft-relations.message`),
@@ -259,10 +256,7 @@ const BulkActionButtons = ({
 }) => {
   const { formatMessage } = useIntl();
   const { trackUsage } = useTracking();
-  const {
-    data,
-    contentType: { uid: slug },
-  } = useSelector(listViewDomain());
+  const { data } = useSelector(listViewDomain());
   const { selectedEntries, setSelectedEntries } = useTableContext();
 
   const [isConfirmButtonLoading, setIsConfirmButtonLoading] = React.useState(false);
@@ -339,7 +333,6 @@ const BulkActionButtons = ({
             onToggleDialog={togglePublishDialog}
             isConfirmButtonLoading={isConfirmButtonLoading}
             onConfirm={handleBulkPublish}
-            slug={slug}
           />
         </>
       )}

@@ -107,7 +107,7 @@ describe('Bulk publish selected entries modal', () => {
   it('triggers validation dialog for selected items', async () => {
     const onConfirm = jest.fn();
 
-    render(
+    const { debug } = render(
       <Table.Root rows={listViewRows} defaultSelectedEntries={[1, 2]} colCount={2}>
         <SelectedEntriesModal onConfirm={onConfirm} onToggle={jest.fn()} />
       </Table.Root>
@@ -116,5 +116,6 @@ describe('Bulk publish selected entries modal', () => {
     const publishButton = screen.getByRole('button', { name: /publish/i });
     await user.click(publishButton);
     expect(onConfirm).toHaveBeenCalledWith([1, 2]);
+    debug();
   });
 });
