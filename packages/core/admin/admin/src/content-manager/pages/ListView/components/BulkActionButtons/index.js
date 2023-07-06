@@ -141,7 +141,11 @@ export const ConfirmDialogPublishAll = ({
                 },
                 {
                   // eslint-disable-next-line react/no-unstable-nested-components
-                  b: (chunks) => <Typography fontWeight="bold">{chunks}</Typography>,
+                  b: (chunks) => (
+                    <Typography fontWeight="bold" data-testid="draft-rel-warning">
+                      {chunks}
+                    </Typography>
+                  ),
                   count: countDraftRelations,
                   entities: selectedEntries.length,
                 }

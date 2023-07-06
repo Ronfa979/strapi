@@ -233,15 +233,68 @@ describe('ConfirmDialogPublishAll', () => {
     server.close();
   });
   it('should show a default message if there are not draft relations', async () => {
-    setupConfirmPublish();
-    await waitFor(() => expect(screen.getByText('Confirmation')).toBeInTheDocument());
+    const { getByText, queryByText } = setupConfirmPublish();
+    await waitFor(() => expect(getByText('Confirmation')).toBeInTheDocument());
     expect(
-      screen.queryByText('not published yet and might lead to unexpected behavior')
+      queryByText('not published yet and might lead to unexpected behavior')
     ).not.toBeInTheDocument();
     await waitFor(() =>
-      expect(
-        screen.getByText('Are you sure you want to publish these entries?')
-      ).toBeInTheDocument()
+      expect(getByText('Are you sure you want to publish these entries?')).toBeInTheDocument()
     );
+  });
+  it('should show the warning message with just 1 draft relation and two entries', async () => {
+    server.use(
+      rest.get('*/countManyEntriesDraftRelations', (req, res, ctx) => {
+        return res.once(
+          ctx.status(200),
+          ctx.json({
+            data: 1,
+          })
+        );
+      })
+    );
+
+    const { getByText, getByTestId } = setupConfirmPublish();
+    await waitFor(() => expect(getByText('Confirmation')).toBeInTheDocument());
+    const draftWarning = await getByTestId('draft-rel-warning');
+
+    await waitFor(() =>
+      expect(draftWarning.textContent).toBe('1  relation  out of 2  entries   is ')
+    );
+  });
+  it('should show the warning message with 2 draft relations and two entries', async () => {
+    server.use(
+      rest.get('*/countManyEntriesDraftRelations', (req, res, ctx) => {
+        return res.once(
+          ctx.status(200),
+          ctx.json({
+            data: 2,
+          })
+        );
+      })
+    );
+
+    const { getByText, getByTestId } = setupConfirmPublish();
+    await waitFor(() => expect(getByText('Confirmation')).toBeInTheDocument());
+    const draftWarning = await getByTestId('draft-rel-warning');
+
+    await waitFor(() =>
+      expect(draftWarning.textContent).toBe('2  relations  out of 2  entries   are ')
+    );
+  });
+  it('should not show the Confirmation component if there is an error coming from the API', async () => {
+    server.use(
+      rest.get('*/countManyEntriesDraftRelations', (req, res, ctx) => {
+        return res.once(
+          ctx.status(500),
+          ctx.json({
+            errorMessage: 'Error',
+          })
+        );
+      })
+    );
+
+    const { queryByText } = setupConfirmPublish();
+    await waitFor(() => expect(queryByText('Confirmation')).not.toBeInTheDocument());
   });
 });
