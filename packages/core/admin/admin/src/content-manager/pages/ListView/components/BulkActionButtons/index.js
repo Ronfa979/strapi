@@ -1,7 +1,13 @@
 import * as React from 'react';
 
 import { Button, Flex, Dialog, DialogBody, DialogFooter, Typography } from '@strapi/design-system';
-import { useTracking, useTableContext, useFetchClient } from '@strapi/helper-plugin';
+import {
+  useAPIErrorHandler,
+  useTracking,
+  useTableContext,
+  useFetchClient,
+  useNotification,
+} from '@strapi/helper-plugin';
 import { Check, ExclamationMarkCircle, Trash } from '@strapi/icons';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
@@ -75,41 +81,48 @@ const ConfirmDialogPublishAll = ({ isOpen, onToggleDialog, isConfirmButtonLoadin
   const { formatMessage } = useIntl();
   const { get } = useFetchClient();
   const { selectedEntries } = useTableContext();
+  const toggleNotification = useNotification();
+  const { formatAPIError } = useAPIErrorHandler(getTrad);
   const {
     contentType: { uid: slug },
   } = useSelector(listViewDomain());
 
-  const { data: countDraftRelations } = useQuery(
+  const {
+    data: countDraftRelations,
+    isLoading,
+    isError,
+    error,
+  } = useQuery(
     ['content-manager', 'draft-relations'],
     async () => {
       /**
        * TODO: refactor the API call when the param serializer will be ready
        */
-      try {
-        const {
-          data: { data },
-        } = await get(
-          `/content-manager/collection-types/${slug}/actions/countManyEntriesDraftRelations?${stringify(
-            { ids: selectedEntries },
-            { encode: false }
-          )}`
-        );
+      const {
+        data: { data },
+      } = await get(
+        `/content-manager/collection-types/${slug}/actions/countManyEntriesDraftRelations?${stringify(
+          { ids: selectedEntries },
+          { encode: false }
+        )}`
+      );
 
-        return data;
-      } catch (err) {
-        console.error(err.message);
-
-        return null;
-      }
+      return data;
     },
     {
       enabled: isOpen,
     }
   );
 
+  if (isError) {
+    toggleNotification({ type: 'warning', message: formatAPIError(error) });
+
+    return null;
+  }
+
   return (
     <ConfirmBulkActionDialog
-      isOpen={isOpen}
+      isOpen={isOpen && !isLoading && !isError}
       onToggleDialog={onToggleDialog}
       dialogBody={
         <>

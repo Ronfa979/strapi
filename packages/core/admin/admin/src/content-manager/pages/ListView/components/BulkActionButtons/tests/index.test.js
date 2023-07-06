@@ -22,6 +22,9 @@ jest.mock('@strapi/helper-plugin', () => ({
     selectedEntries: [1, 2],
     setSelectedEntries: jest.fn(),
   })),
+  useNotification: jest.fn(() => ({
+    toggleNotification: jest.fn(),
+  })),
 }));
 
 jest.mock('../../../../../../shared/hooks', () => ({
