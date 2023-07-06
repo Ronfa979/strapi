@@ -77,7 +77,12 @@ const confirmDialogsPropTypes = {
  * ConfirmDialogPublishAll
  * -----------------------------------------------------------------------------------------------*/
 
-const ConfirmDialogPublishAll = ({ isOpen, onToggleDialog, isConfirmButtonLoading, onConfirm }) => {
+export const ConfirmDialogPublishAll = ({
+  isOpen,
+  onToggleDialog,
+  isConfirmButtonLoading,
+  onConfirm,
+}) => {
   const { formatMessage } = useIntl();
   const { get } = useFetchClient();
   const { selectedEntries } = useTableContext();
@@ -93,7 +98,7 @@ const ConfirmDialogPublishAll = ({ isOpen, onToggleDialog, isConfirmButtonLoadin
     isError,
     error,
   } = useQuery(
-    ['content-manager', 'draft-relations'],
+    ['content-manager', 'draft-relations', slug, selectedEntries],
     async () => {
       /**
        * TODO: refactor the API call when the param serializer will be ready
