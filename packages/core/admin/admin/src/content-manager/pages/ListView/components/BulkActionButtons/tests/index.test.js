@@ -283,6 +283,8 @@ describe('ConfirmDialogPublishAll', () => {
     );
   });
   it('should not show the Confirmation component if there is an error coming from the API', async () => {
+    const originalConsoleError = console.error;
+    console.error = jest.fn();
     server.use(
       rest.get('*/countManyEntriesDraftRelations', (req, res, ctx) => {
         return res.once(
@@ -296,5 +298,6 @@ describe('ConfirmDialogPublishAll', () => {
 
     const { queryByText } = setupConfirmPublish();
     await waitFor(() => expect(queryByText('Confirmation')).not.toBeInTheDocument());
+    console.error = originalConsoleError;
   });
 });
