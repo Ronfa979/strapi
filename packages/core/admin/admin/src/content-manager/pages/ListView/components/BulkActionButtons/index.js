@@ -116,12 +116,13 @@ export const ConfirmDialogPublishAll = ({
     },
     {
       enabled: isOpen,
+      onError(error) {
+        toggleNotification({ type: 'warning', message: formatAPIError(error) });
+      },
     }
   );
 
   if (isError) {
-    toggleNotification({ type: 'warning', message: formatAPIError(error) });
-
     return null;
   }
 
