@@ -96,7 +96,6 @@ export const ConfirmDialogPublishAll = ({
     data: countDraftRelations,
     isLoading,
     isError,
-    error,
   } = useQuery(
     ['content-manager', 'draft-relations', slug, selectedEntries],
     async () => {
