@@ -8649,7 +8649,7 @@ __metadata:
   resolution: "@strapi/provider-upload-aws-s3@workspace:packages/providers/upload-aws-s3"
   dependencies:
     "@types/jest": 29.5.2
-    aws-sdk: 2.1409.0
+    aws-sdk: 2.1425.0
     eslint-config-custom: 4.11.4
     lodash: 4.17.21
     tsconfig: 4.11.4
@@ -12175,9 +12175,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:2.1409.0":
-  version: 2.1409.0
-  resolution: "aws-sdk@npm:2.1409.0"
+"aws-sdk@npm:2.1425.0":
+  version: 2.1425.0
+  resolution: "aws-sdk@npm:2.1425.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -12189,7 +12189,7 @@ __metadata:
     util: ^0.12.4
     uuid: 8.0.0
     xml2js: 0.5.0
-  checksum: f0046c83916e12b07b28699fd20aea11d78a3f41b1aa6add2ed645f92dec8b424640ef9439596545eba5f3d3a4254c08ce12b7d48504656dd37d2cc9b5ba9994
+  checksum: 78621e9ef96ae3fcf2d67bfbf22613fbd19511cc84926e80db06ab4478d8dcda1021b9e6ca5f731c962ff7c7cd6e4056d9b23818385e83c95493d25376aa8a1a
   languageName: node
   linkType: hard
 
